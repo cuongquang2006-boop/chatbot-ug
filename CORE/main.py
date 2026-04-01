@@ -6,10 +6,10 @@ import requests
 import traceback
 
 # đưa key gemini vào đây(demini key here!)
-GEMINI_API_KEY = "AIzaxxxxxxxxxxxxxxxxxxxxxxxxxxxqFxFWXcNM"
+GEMINI_API_KEY = "AIzaxxxxxxxxxxxxxxxxxxxxxxxxxxxqFxXcNM"
 
 # OpenRouter fallback (add your key, maybe or not)
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "sk-or-v13xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxf64ace4146939"
 
 client = genai.Client(api_key=GEMINI_API_KEY)
 
