@@ -41,11 +41,9 @@ void MainWindow::setupUI()
     mainLayout->addWidget(chatBox);
     mainLayout->addLayout(bottomLayout);
 
-    connect(sendBtn, &QPushButton::clicked,
-            this, &MainWindow::sendMessage);
+    connect(sendBtn, &QPushButton::clicked,this, &MainWindow::sendMessage);
 
-    connect(input, &QLineEdit::returnPressed,
-            this, &MainWindow::sendMessage);
+    connect(input, &QLineEdit::returnPressed,this, &MainWindow::sendMessage);
 }
 
 void MainWindow::sendMessage()
@@ -53,13 +51,13 @@ void MainWindow::sendMessage()
     QString text = input->text().trimmed();
     if (text.isEmpty()) return;
 
-    chatBox->append("🧑 Bạn: " + text);
+    chatBox->append(" Bạn: " + text);
     input->clear();
 
     sendBtn->setEnabled(false);
-    chatBox->append("🤖 AI đang suy nghĩ...");
+    chatBox->append(" AI đang suy nghĩ...");
 
-    QUrl url("http://127.0.0.1:8001/ask"); // 🔥 nhớ port 8001
+    QUrl url("http://127.0.0.1:8001/ask"); // ADD PORT HERE!!!!!!
 
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -67,42 +65,43 @@ void MainWindow::sendMessage()
     QJsonObject json;
     json["text"] = text;
 
-    QNetworkReply *reply = manager->post(
-        request,
-        QJsonDocument(json).toJson()
-        );
+    QNetworkReply *reply = manager->post(request,QJsonDocument(json).toJson());
 
-    connect(reply, &QNetworkReply::finished, this, [=]() {
+    connect(reply, &QNetworkReply::finished, this, [=]() 
+    {
 
         QByteArray response = reply->readAll();
 
         sendBtn->setEnabled(true);
 
-        if (reply->error() != QNetworkReply::NoError) {
-            chatBox->append("❌ Lỗi mạng: " + reply->errorString());
+        if (reply->error() != QNetworkReply::NoError) 
+        {
+            chatBox->append(" Lỗi mạng: " + reply->errorString());
             reply->deleteLater();
             return;
         }
 
         QJsonDocument doc = QJsonDocument::fromJson(response);
 
-        if (!doc.isObject()) {
-            chatBox->append("❌ JSON lỗi");
+        if (!doc.isObject()) 
+        {
+            chatBox->append(" JSON lỗi");
             reply->deleteLater();
             return;
         }
 
         QJsonObject obj = doc.object();
 
-        if (obj.contains("result")) {
-            chatBox->append("🤖 AI: " + obj["result"].toString());
-        } else {
-            chatBox->append("❌ API lỗi");
+        if (obj.contains("result")) 
+        {
+            chatBox->append(" AI: " + obj["result"].toString());
+        } 
+        else 
+        {
+            chatBox->append(" API lỗi");
         }
 
-        chatBox->verticalScrollBar()->setValue(
-            chatBox->verticalScrollBar()->maximum()
-            );
+        chatBox->verticalScrollBar()->setValue(chatBox->verticalScrollBar()->maximum());
 
         reply->deleteLater();
     });
